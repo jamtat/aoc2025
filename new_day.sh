@@ -4,10 +4,11 @@ set -euo pipefail
 
 DAY_NUM="$1"
 
+mkdir -p input/ src/bin/examples/
 touch input/day$DAY_NUM.txt src/bin/examples/day$DAY_NUM.txt
 
 cat << EOF > src/bin/day$DAY_NUM.rs
-use aoc2024::aoc;
+use aoc2025::aoc;
 
 mod part1 {
     use super::*;
