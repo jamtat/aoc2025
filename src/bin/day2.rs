@@ -44,8 +44,7 @@ mod part1 {
     pub fn calculate(input: &str) -> usize {
         parse_input(input)
             .iter()
-            .map(Range::iter)
-            .flatten()
+            .flat_map(Range::iter)
             .filter(|i| is_invalid(*i))
             .sum()
     }
@@ -74,12 +73,55 @@ mod part1 {
         }
     }
 }
-/*
+
 mod part2 {
     use super::*;
 
+    fn is_invalid(i: usize) -> bool {
+        if i < 10 {
+            return false;
+        }
+        let digits = i.ilog10() + 1;
+
+        for repeated in 1..=(digits / 2) {
+            // Can only test if the number of repeating digits evenly divides in!
+            if !digits.is_multiple_of(repeated) {
+                continue;
+            }
+            let pow10 = 10usize.pow(repeated);
+            let target = i % pow10;
+
+            let mut x = i;
+
+            let mut failed = false;
+            while x > 0 {
+                let popped = x % pow10;
+                if popped == target {
+                    #[cfg(test)]
+                    println!("Testing {i} for repeat of {target}");
+                    x /= pow10;
+                } else {
+                    failed = true;
+                    break;
+                }
+            }
+
+            if !failed {
+                #[cfg(test)]
+                println!("{i} is invalid with repeat of {target}");
+                return true;
+            }
+        }
+
+        false
+    }
+
     pub fn calculate(input: &str) -> usize {
-        0
+        parse_input(input)
+            .iter()
+            .flat_map(Range::iter)
+            .filter(|i| is_invalid(*i))
+            .sum()
     }
 
     #[cfg(test)]
@@ -89,16 +131,28 @@ mod part2 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day2.txt");
-            assert_eq!(calculate(&input), 0);
+            assert_eq!(calculate(&input), 4174379265);
+        }
+
+        #[test]
+        fn test_is_invalid() {
+            assert!(is_invalid(11));
+            assert!(is_invalid(22));
+            assert!(is_invalid(99));
+            assert!(is_invalid(111));
+            assert!(is_invalid(999));
+            assert!(is_invalid(1010));
+
+            assert!(!is_invalid(9009009));
         }
     }
 }
-*/
+
 fn main() {
     let cli = aoc::cli::parse();
 
     let input = cli.input_string();
 
     println!("Part 1: {}", part1::calculate(&input)); // 35367539282
-    // println!("Part 2: {}", part2::calculate(&input));
+    println!("Part 2: {}", part2::calculate(&input)); // 45814076230
 }

@@ -59,7 +59,7 @@ mod part2 {
                 continue;
             }
             let mut points: usize = 0;
-            let full_rotations = (i / DIAL_SIZE).abs() as usize;
+            let full_rotations = (i / DIAL_SIZE).unsigned_abs() as usize;
             points += full_rotations;
 
             let rem = i % DIAL_SIZE;

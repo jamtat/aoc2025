@@ -35,7 +35,7 @@ impl Cli {
             f.clone()
         } else {
             let day_name = env::args()
-                .last()
+                .next_back()
                 .unwrap()
                 .rsplit_once('/')
                 .unwrap()
