@@ -107,7 +107,7 @@ macro_rules! impl_ilog10 {
     ($typ:ty) => {
         impl ILog10 for $typ {
             fn ilog10(self) -> u32 {
-                self.ilog10()
+                <$typ>::ilog10(self)
             }
         }
     };
@@ -169,8 +169,12 @@ where
     T: Copy + UnsignedAbs<Output = U>,
     U: Copy + Eq + ILog10 + NumConsts,
 {
-    let x = x.unsigned_abs();
-    if x == U::ZERO { 1 } else { x.ilog10() + 1 }
+    let x = UnsignedAbs::unsigned_abs(x);
+    if x == U::ZERO {
+        1
+    } else {
+        ILog10::ilog10(x) + 1
+    }
 }
 
 #[cfg(test)]
