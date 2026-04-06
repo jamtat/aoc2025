@@ -34,13 +34,11 @@ impl std::str::FromStr for State {
     }
 }
 
-pub type Floor = Grid<Vec<State>>;
-
 mod part1 {
     use super::*;
 
     pub fn calculate(input: &str) -> usize {
-        let floor: Floor = input.parse().unwrap();
+        let floor: Grid<Vec<State>> = input.parse().unwrap();
         let counts = Grid::<Vec<u8>>::fill(floor.width(), floor.height(), 0);
 
         for cell in &floor {
@@ -82,12 +80,80 @@ mod part1 {
         }
     }
 }
-/*
+
 mod part2 {
+    use std::collections::HashMap;
+
+    use aoc2025::aoc::grid::Point;
+
     use super::*;
 
+    struct FloorState {
+        state: State,
+        count: u8,
+    }
+
+    impl FloorState {
+        fn can_remove(&self) -> bool {
+            match self.state {
+                State::Empty => false,
+                State::Paper => self.count < 4,
+            }
+        }
+    }
+
+    impl std::str::FromStr for FloorState {
+        type Err = String;
+
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            Ok(FloorState {
+                state: s.parse()?,
+                count: 0,
+            })
+        }
+    }
+
     pub fn calculate(input: &str) -> usize {
-        0
+        let mut removed = 0;
+        let floor: Grid<Vec<FloorState>> = input.parse().unwrap();
+
+        // Initial count
+        for cell in &floor {
+            match cell.value().state {
+                State::Empty => {}
+                State::Paper => {
+                    for mut neighbour in cell.neighbours() {
+                        neighbour.value_mut().count += 1;
+                    }
+                }
+            }
+        }
+
+        loop {
+            let mut did_remove = false;
+            let mut to_update: HashMap<Point, u8> = HashMap::new();
+            for cell in &floor {
+                let mut clone = cell.clone();
+                let mut s = clone.value_mut();
+                if s.can_remove() {
+                    did_remove = true;
+                    removed += 1;
+                    s.state = State::Empty;
+
+                    for neighbour in cell.neighbours() {
+                        *to_update.entry(neighbour.point()).or_default() += 1;
+                    }
+                }
+            }
+            for (point, inc) in to_update {
+                floor.value_at_mut(point.x, point.y).unwrap().count += inc;
+            }
+            if did_remove {
+                break;
+            }
+        }
+
+        removed
     }
 
     #[cfg(test)]
@@ -97,16 +163,16 @@ mod part2 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day4.txt");
-            assert_eq!(calculate(&input), 0);
+            assert_eq!(calculate(&input), 43);
         }
     }
 }
-*/
+
 fn main() {
     let cli = aoc::cli::parse();
 
     let input = cli.input_string();
 
     println!("Part 1: {}", part1::calculate(&input));
-    // println!("Part 2: {}", part2::calculate(&input));
+    println!("Part 2: {}", part2::calculate(&input));
 }
