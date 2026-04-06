@@ -82,74 +82,50 @@ mod part1 {
 }
 
 mod part2 {
-    use std::collections::HashMap;
-
-    use aoc2025::aoc::grid::Point;
-
     use super::*;
+    use aoc2025::aoc::grid::{GridCell, Point};
 
-    struct FloorState {
-        state: State,
-        count: u8,
-    }
+    fn can_remove(cell: &GridCell<'_, Vec<State>>) -> bool {
+        match *cell.value() {
+            State::Empty => false,
+            State::Paper => {
+                let mut count = 0;
+                for neighbour in cell.neighbours() {
+                    match *neighbour.value() {
+                        State::Empty => {}
+                        State::Paper => {
+                            count += 1;
+                        }
+                    }
+                }
 
-    impl FloorState {
-        fn can_remove(&self) -> bool {
-            match self.state {
-                State::Empty => false,
-                State::Paper => self.count < 4,
+                count < 4
             }
-        }
-    }
-
-    impl std::str::FromStr for FloorState {
-        type Err = String;
-
-        fn from_str(s: &str) -> Result<Self, Self::Err> {
-            Ok(FloorState {
-                state: s.parse()?,
-                count: 0,
-            })
         }
     }
 
     pub fn calculate(input: &str) -> usize {
         let mut removed = 0;
-        let floor: Grid<Vec<FloorState>> = input.parse().unwrap();
-
-        // Initial count
-        for cell in &floor {
-            match cell.value().state {
-                State::Empty => {}
-                State::Paper => {
-                    for mut neighbour in cell.neighbours() {
-                        neighbour.value_mut().count += 1;
-                    }
-                }
-            }
-        }
+        let floor: Grid<Vec<State>> = input.parse().unwrap();
 
         loop {
-            let mut did_remove = false;
-            let mut to_update: HashMap<Point, u8> = HashMap::new();
+            let mut to_remove: Vec<Point> = Vec::new();
             for cell in &floor {
-                let mut clone = cell.clone();
-                let mut s = clone.value_mut();
-                if s.can_remove() {
-                    did_remove = true;
-                    removed += 1;
-                    s.state = State::Empty;
-
-                    for neighbour in cell.neighbours() {
-                        *to_update.entry(neighbour.point()).or_default() += 1;
-                    }
+                if can_remove(&cell) {
+                    to_remove.push(cell.point());
                 }
             }
-            for (point, inc) in to_update {
-                floor.value_at_mut(point.x, point.y).unwrap().count += inc;
-            }
-            if did_remove {
+
+            if to_remove.is_empty() {
                 break;
+            }
+            removed += to_remove.len();
+
+            #[cfg(test)]
+            println!("Removing {} rolls", to_remove.len());
+
+            for point in to_remove {
+                *floor.cell_at_point(&point).unwrap().value_mut() = State::Empty;
             }
         }
 
