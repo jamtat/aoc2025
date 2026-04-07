@@ -384,6 +384,14 @@ pub trait Digits {
     {
         reverse_digits(self)
     }
+
+    fn num_digits<U>(self) -> u32
+    where
+        Self: Copy + UnsignedAbs<Output = U>,
+        U: Copy + Eq + ILog10 + NumConsts,
+    {
+        num_digits(self)
+    }
 }
 
 impl<T> Digits for T {}
