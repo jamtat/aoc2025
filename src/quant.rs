@@ -1,4 +1,4 @@
-use std::ops::{Div, Mul, Rem};
+use std::ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Rem};
 
 pub fn lcm<T>(a: T, b: T) -> T
 where
@@ -102,6 +102,34 @@ impl_rem_euclid!(i32);
 impl_rem_euclid!(i64);
 impl_rem_euclid!(i128);
 impl_rem_euclid!(isize);
+
+pub trait DivEuclid {
+    fn div_euclid(self, other: Self) -> Self;
+}
+macro_rules! impl_div_euclid {
+    ($typ:ty) => {
+        impl DivEuclid for $typ {
+            fn div_euclid(self, other: Self) -> Self {
+                <$typ>::div_euclid(self, other)
+            }
+        }
+    };
+}
+
+impl_div_euclid!(f32);
+impl_div_euclid!(f64);
+impl_div_euclid!(u8);
+impl_div_euclid!(u16);
+impl_div_euclid!(u32);
+impl_div_euclid!(u64);
+impl_div_euclid!(u128);
+impl_div_euclid!(usize);
+impl_div_euclid!(i8);
+impl_div_euclid!(i16);
+impl_div_euclid!(i32);
+impl_div_euclid!(i64);
+impl_div_euclid!(i128);
+impl_div_euclid!(isize);
 
 pub trait ILog10 {
     fn ilog10(self) -> u32;
@@ -315,4 +343,38 @@ where
     T: Copy + UnsignedAbs<Output = U>,
     U: Copy + Eq + ILog10 + NumConsts,
 {
+}
+
+pub fn reverse_digits<T>(n: T) -> T
+where
+    T: Copy + NumConsts + Rem<Output = T> + DivAssign + MulAssign + AddAssign + Eq + PartialEq,
+{
+    let base = T::TEN;
+    let mut out = T::ZERO;
+
+    let mut n = n;
+
+    while n != T::ZERO {
+        out *= base;
+        out += n % base;
+        n /= base;
+    }
+
+    out
+}
+
+#[cfg(test)]
+mod test_reverse_digits {
+    use super::*;
+    #[test]
+    fn test_reverse_digits() {
+        assert_eq!(reverse_digits(0usize), 0);
+        assert_eq!(reverse_digits(10usize), 1);
+        assert_eq!(reverse_digits(1234560usize), 654321);
+    }
+
+    #[test]
+    fn test_reverse_digits_neg() {
+        assert_eq!(reverse_digits(-1234560isize), -654321);
+    }
 }
