@@ -42,18 +42,21 @@ impl<T: ?Sized> QuantIter for T where T: Iterator {}
 pub trait NumConsts {
     const ZERO: Self;
     const ONE: Self;
+    const TEN: Self;
 }
 macro_rules! impl_consts {
     ($typ:ty) => {
         impl NumConsts for $typ {
             const ZERO: $typ = 0;
             const ONE: $typ = 1;
+            const TEN: $typ = 10;
         }
     };
     ($typ:ty, f) => {
         impl NumConsts for $typ {
             const ZERO: $typ = 0.0;
             const ONE: $typ = 1.0;
+            const TEN: $typ = 10.0;
         }
     };
 }
@@ -164,7 +167,7 @@ impl_uabs_i!(i64, u64);
 impl_uabs_i!(i128, u128);
 impl_uabs_i!(isize, usize);
 
-pub fn digits<T, U>(x: T) -> u32
+pub fn num_digits<T, U>(x: T) -> u32
 where
     T: Copy + UnsignedAbs<Output = U>,
     U: Copy + Eq + ILog10 + NumConsts,
@@ -178,15 +181,121 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod test_digits {
     use super::*;
 
     #[test]
     fn test_digits() {
-        assert_eq!(digits(0), 1);
-        assert_eq!(digits(1), 1);
-        assert_eq!(digits(-1), 1);
-        assert_eq!(digits(100), 3);
-        assert_eq!(digits(-100), 3);
+        assert_eq!(num_digits(0), 1);
+        assert_eq!(num_digits(1), 1);
+        assert_eq!(num_digits(-1), 1);
+        assert_eq!(num_digits(100), 3);
+        assert_eq!(num_digits(-100), 3);
+    }
+}
+
+pub trait Pow {
+    fn pow(self, exp: u32) -> Self;
+}
+
+macro_rules! impl_pow {
+    ($typ:ty) => {
+        impl Pow for $typ {
+            fn pow(self, exp: u32) -> Self {
+                <$typ>::pow(self, exp)
+            }
+        }
+    };
+}
+
+impl_pow!(u8);
+impl_pow!(u16);
+impl_pow!(u32);
+impl_pow!(u64);
+impl_pow!(u128);
+impl_pow!(usize);
+impl_pow!(i8);
+impl_pow!(i16);
+impl_pow!(i32);
+impl_pow!(i64);
+impl_pow!(i128);
+impl_pow!(isize);
+
+pub struct DigitIter<T> {
+    r: u32,
+    l: u32,
+    num_digits: u32,
+    n: T,
+}
+
+impl<U> DigitIter<U> {
+    pub fn new<T>(n: T) -> Self
+    where
+        T: Copy + UnsignedAbs<Output = U>,
+        U: Copy + Eq + ILog10 + NumConsts,
+    {
+        let num_digits = num_digits(n);
+        Self {
+            r: 0,
+            num_digits,
+            l: num_digits,
+            n: n.unsigned_abs(),
+        }
+    }
+
+    fn digit_at(&self, i: u32) -> Option<U>
+    where
+        U: Copy + NumConsts + RemEuclid + Pow + Div<Output = U>,
+    {
+        if i < self.num_digits {
+            Some((self.n / U::TEN.pow(i)).rem_euclid(U::TEN))
+        } else {
+            None
+        }
+    }
+}
+
+impl<T> Iterator for DigitIter<T>
+where
+    T: Copy + NumConsts + RemEuclid + Pow + Div<Output = T>,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.r >= self.l {
+            return None;
+        }
+
+        self.r += 1;
+        self.digit_at(self.r - 1)
+    }
+}
+
+impl<T> DoubleEndedIterator for DigitIter<T>
+where
+    T: Copy + NumConsts + RemEuclid + Pow + Div<Output = T>,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        if self.l <= self.r {
+            return None;
+        }
+
+        self.l -= 1;
+        self.digit_at(self.l)
+    }
+}
+
+#[cfg(test)]
+mod test_digit_iter {
+    use super::*;
+
+    #[test]
+    fn test_digit_iter() {
+        assert_eq!(DigitIter::new(0u8).collect::<Vec<_>>(), vec![0u8]);
+        assert_eq!(DigitIter::new(102u32).collect::<Vec<_>>(), vec![2u32, 0, 1]);
+        assert_eq!(
+            DigitIter::new(102u32).rev().collect::<Vec<_>>(),
+            vec![1u32, 0, 2]
+        );
     }
 }

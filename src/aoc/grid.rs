@@ -192,7 +192,7 @@ impl<U: Copy> Grid<Vec<U>> {
         Grid::new(
             width,
             height,
-            std::iter::repeat(val).take(width * height).collect(),
+            std::iter::repeat_n(val, width * height).collect(),
         )
     }
 }
@@ -382,7 +382,7 @@ impl<T: Index<usize>> GridCell<'_, T> {
             self.down().and_then(|cell| cell.right()),
         ];
 
-        neighbours.into_iter().filter_map(|cell| cell).collect()
+        neighbours.into_iter().flatten().collect()
     }
 }
 

@@ -23,7 +23,7 @@ impl Op {
     pub fn reduce(&self, args: impl Iterator<Item = u64>) -> u64 {
         match self {
             Op::Add => args.sum(),
-            Op::Mul => args.fold(1, |agg, val| agg * val),
+            Op::Mul => args.product(),
         }
     }
 }
