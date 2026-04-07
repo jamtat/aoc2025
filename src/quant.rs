@@ -43,6 +43,9 @@ pub trait NumConsts {
     const ZERO: Self;
     const ONE: Self;
     const TEN: Self;
+    const MIN: Self;
+    const MAX: Self;
+    const BITS: u32;
 }
 macro_rules! impl_consts {
     ($typ:ty) => {
@@ -50,13 +53,19 @@ macro_rules! impl_consts {
             const ZERO: $typ = 0;
             const ONE: $typ = 1;
             const TEN: $typ = 10;
+            const MIN: $typ = <$typ>::MIN;
+            const MAX: $typ = <$typ>::MAX;
+            const BITS: u32 = <$typ>::BITS;
         }
     };
-    ($typ:ty, f) => {
+    ($typ:ty, $bits:expr) => {
         impl NumConsts for $typ {
             const ZERO: $typ = 0.0;
             const ONE: $typ = 1.0;
             const TEN: $typ = 10.0;
+            const MIN: $typ = <$typ>::MIN;
+            const MAX: $typ = <$typ>::MAX;
+            const BITS: u32 = $bits;
         }
     };
 }
@@ -72,8 +81,8 @@ impl_consts!(i32);
 impl_consts!(i64);
 impl_consts!(i128);
 impl_consts!(isize);
-impl_consts!(f32, f);
-impl_consts!(f64, f);
+impl_consts!(f32, 32);
+impl_consts!(f64, 64);
 
 pub trait RemEuclid {
     fn rem_euclid(self, other: Self) -> Self;
