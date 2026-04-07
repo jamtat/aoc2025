@@ -291,11 +291,28 @@ mod test_digit_iter {
 
     #[test]
     fn test_digit_iter() {
-        assert_eq!(DigitIter::new(0u8).collect::<Vec<_>>(), vec![0u8]);
-        assert_eq!(DigitIter::new(102u32).collect::<Vec<_>>(), vec![2u32, 0, 1]);
+        assert_eq!(0u8.iter_digits().collect::<Vec<_>>(), vec![0u8]);
+        assert_eq!(102u32.iter_digits().collect::<Vec<_>>(), vec![2u32, 0, 1]);
         assert_eq!(
-            DigitIter::new(102u32).rev().collect::<Vec<_>>(),
+            102u32.iter_digits().rev().collect::<Vec<_>>(),
             vec![1u32, 0, 2]
         );
     }
+}
+
+pub trait IterDigits {
+    fn iter_digits<U>(self) -> DigitIter<U>
+    where
+        Self: Copy + UnsignedAbs<Output = U>,
+        U: Copy + Eq + ILog10 + NumConsts,
+    {
+        DigitIter::new(self)
+    }
+}
+
+impl<T, U> IterDigits for T
+where
+    T: Copy + UnsignedAbs<Output = U>,
+    U: Copy + Eq + ILog10 + NumConsts,
+{
 }
