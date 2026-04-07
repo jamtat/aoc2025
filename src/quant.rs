@@ -328,23 +328,6 @@ mod test_digit_iter {
     }
 }
 
-pub trait IterDigits {
-    fn iter_digits<U>(self) -> DigitIter<U>
-    where
-        Self: Copy + UnsignedAbs<Output = U>,
-        U: Copy + Eq + ILog10 + NumConsts,
-    {
-        DigitIter::new(self)
-    }
-}
-
-impl<T, U> IterDigits for T
-where
-    T: Copy + UnsignedAbs<Output = U>,
-    U: Copy + Eq + ILog10 + NumConsts,
-{
-}
-
 pub fn reverse_digits<T>(n: T) -> T
 where
     T: Copy + NumConsts + Rem<Output = T> + DivAssign + MulAssign + AddAssign + Eq + PartialEq,
@@ -375,6 +358,32 @@ mod test_reverse_digits {
 
     #[test]
     fn test_reverse_digits_neg() {
-        assert_eq!(reverse_digits(-1234560isize), -654321);
+        assert_eq!(-1234560isize.reverse_digits(), -654321);
     }
 }
+
+pub trait Digits {
+    fn iter_digits<U>(self) -> DigitIter<U>
+    where
+        Self: Copy + UnsignedAbs<Output = U>,
+        U: Copy + Eq + ILog10 + NumConsts,
+    {
+        DigitIter::new(self)
+    }
+
+    fn reverse_digits(self) -> Self
+    where
+        Self: Copy
+            + NumConsts
+            + Rem<Output = Self>
+            + DivAssign
+            + MulAssign
+            + AddAssign
+            + Eq
+            + PartialEq,
+    {
+        reverse_digits(self)
+    }
+}
+
+impl<T> Digits for T {}
