@@ -290,6 +290,10 @@ impl<U> DigitIter<U> {
             None
         }
     }
+
+    fn remaining(&self) -> u32 {
+        self.l - self.r
+    }
 }
 
 impl<T> Iterator for DigitIter<T>
@@ -305,6 +309,18 @@ where
 
         self.r += 1;
         self.digit_at(self.r - 1)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let remaining = self.remaining() as usize;
+        (remaining, Some(remaining))
+    }
+
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.remaining() as usize
     }
 }
 
