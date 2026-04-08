@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Write, str::FromStr};
 
 use aoc2025::aoc;
 
@@ -25,6 +25,29 @@ impl Op {
             Op::Add => args.sum(),
             Op::Mul => args.product(),
         }
+    }
+
+    const fn base(&self) -> u64 {
+        match self {
+            Op::Add => 0,
+            Op::Mul => 1,
+        }
+    }
+
+    fn apply(&self, a: u64, b: u64) -> u64 {
+        match self {
+            Op::Add => a + b,
+            Op::Mul => a * b,
+        }
+    }
+}
+
+impl std::fmt::Display for Op {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_char(match self {
+            Op::Add => '+',
+            Op::Mul => '*',
+        })
     }
 }
 
@@ -70,12 +93,70 @@ mod part1 {
         }
     }
 }
-/*
+
 mod part2 {
     use super::*;
 
-    pub fn calculate(input: &str) -> usize {
-        0
+    pub fn calculate(input: &str) -> u64 {
+        let lines: Vec<_> = input.lines().collect();
+        let num_lines = &lines[..lines.len() - 1];
+        let ops_line = lines[lines.len() - 1];
+
+        let ops: Vec<Op> = ops_line
+            .split_whitespace()
+            .map(|s| s.parse())
+            .collect::<Result<_, _>>()
+            .unwrap();
+
+        let lens = {
+            let mut lens: Vec<usize> = ops_line
+                .as_bytes()
+                .split(|c: &u8| *c != b' ')
+                .skip(1) // First one will be empty because it comes before the first op
+                .map(|l| l.len())
+                .collect();
+
+            let l = lens.len();
+            lens[l - 1] += 1;
+
+            lens
+        };
+
+        let mut offset = 0;
+
+        let mut grand_total = 0;
+        #[allow(unused_variables)]
+        for (col_i, (op, len)) in ops.into_iter().zip(lens.into_iter()).enumerate() {
+            let mut col_total = op.base();
+
+            #[cfg(test)]
+            println!("Parsing column {col_i}: op={op}, len={len}, base={col_total}");
+
+            for i in 0..len {
+                let mut num = 0;
+                for line in num_lines {
+                    let line = line.as_bytes();
+                    match line[offset + i] {
+                        digit @ b'0'..=b'9' => {
+                            num *= 10;
+                            num += (digit - b'0') as u64;
+                        }
+                        _ => continue,
+                    }
+                }
+                #[cfg(test)]
+                println!(" i={i}: parsed num={num}");
+                col_total = op.apply(col_total, num)
+            }
+            offset += len + 1;
+
+            #[cfg(test)]
+            println!(" total={col_total}");
+
+            grand_total += col_total;
+        }
+
+        grand_total
     }
 
     #[cfg(test)]
@@ -85,16 +166,17 @@ mod part2 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day6.txt");
-            assert_eq!(calculate(&input), 0);
+            println!("{input}");
+            assert_eq!(calculate(&input), 3263827);
         }
     }
 }
-*/
+
 fn main() {
     let cli = aoc::cli::parse();
 
     let input = cli.input_string();
 
     println!("Part 1: {}", part1::calculate(&input));
-    // println!("Part 2: {}", part2::calculate(&input));
+    println!("Part 2: {}", part2::calculate(&input));
 }
