@@ -2,16 +2,17 @@ use std::{
     env,
     fs::{File, read_to_string},
     io::{BufRead, BufReader},
+    path::PathBuf,
 };
 
 use clap::Parser;
 
 #[derive(Parser, Debug)]
 pub struct Cli {
-    pub input: Option<std::path::PathBuf>,
+    pub input: Option<PathBuf>,
 }
 
-fn input_path(filename: &str) -> std::path::PathBuf {
+fn input_path(filename: &str) -> PathBuf {
     format!("input/{filename}").into()
 }
 
@@ -30,7 +31,7 @@ impl Cli {
         read_to_string(self.input_file()).unwrap()
     }
 
-    pub fn input_file(&self) -> std::path::PathBuf {
+    pub fn input_file(&self) -> PathBuf {
         if let Some(f) = &self.input {
             f.clone()
         } else {

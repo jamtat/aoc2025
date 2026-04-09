@@ -1,5 +1,3 @@
-use aoc2025::aoc;
-
 fn max_concat_digits(xs: &[usize], count: u32) -> usize {
     if count == 0 {
         return 0;

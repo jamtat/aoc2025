@@ -1,7 +1,5 @@
 use std::ops::RangeInclusive;
 
-use aoc2025::aoc;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Range(usize, usize);
 

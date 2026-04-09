@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use aoc2025::aoc;
 use itertools::Itertools;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]

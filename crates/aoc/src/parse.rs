@@ -1,3 +1,5 @@
+use nom::Parser;
+
 pub fn parse_number<T>(s: &str) -> nom::IResult<&str, T>
 where
     T: std::str::FromStr,
@@ -8,12 +10,13 @@ where
             nom::character::complete::digit1,
         )),
         str::parse::<T>,
-    )(s)
+    )
+    .parse(s)
 }
 
 #[cfg(test)]
 mod test {
-    use crate::aoc::parse::parse_number;
+    use super::parse_number;
 
     #[test]
     fn test_parse() {

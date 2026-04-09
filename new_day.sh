@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -8,7 +8,7 @@ mkdir -p input/ src/bin/examples/
 touch input/day$DAY_NUM.txt src/bin/examples/day$DAY_NUM.txt
 
 cat << EOF > src/bin/day$DAY_NUM.rs
-use aoc2025::aoc;
+use aoc;
 
 mod part1 {
     use super::*;

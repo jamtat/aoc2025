@@ -4,12 +4,7 @@ use std::{
 };
 
 fn example_path(example: &str) -> std::path::PathBuf {
-    std::path::Path::new(file!())
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .join(format!("bin/examples/{example}"))
+    format!("examples/{example}").into()
 }
 
 pub fn example_lines(example: &str) -> impl Iterator<Item = String> {

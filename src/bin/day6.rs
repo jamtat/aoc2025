@@ -1,7 +1,5 @@
 use std::{fmt::Write, str::FromStr};
 
-use aoc2025::aoc;
-
 enum Op {
     Add,
     Mul,

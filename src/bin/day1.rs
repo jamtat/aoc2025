@@ -1,5 +1,3 @@
-use aoc2025::aoc;
-
 const START: i64 = 50;
 const DIAL_SIZE: i64 = 100;
 

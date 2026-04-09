@@ -1,6 +1,6 @@
 use std::fmt::Write;
 
-use aoc2025::aoc::{self, grid::Grid};
+use grid::{Grid, GridCell, Point};
 
 pub enum State {
     Empty,
@@ -83,7 +83,6 @@ mod part1 {
 
 mod part2 {
     use super::*;
-    use aoc2025::aoc::grid::{GridCell, Point};
 
     fn can_remove(cell: &GridCell<'_, Vec<State>>) -> bool {
         match *cell.value() {

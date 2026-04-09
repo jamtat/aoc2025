@@ -1,4 +1,3 @@
-use aoc2025::aoc;
 use std::{cell::RefCell, collections::HashSet, ops::Deref};
 
 mod part1 {
@@ -54,12 +53,30 @@ mod part1 {
         }
     }
 }
-/*
+
 mod part2 {
+    use grid::Point;
+    use std::collections::VecDeque;
+
     use super::*;
 
+    fn find_coords(input: &str, b: u8) -> impl Iterator<Item = Point> {
+        input.lines().enumerate().flat_map(move |(y, line)| {
+            line.bytes()
+                .enumerate()
+                .filter_map(move |(x, c)| (b == c).then_some(Point::new(x, y)))
+        })
+    }
+
     pub fn calculate(input: &str) -> usize {
-        0
+        let splitters: HashSet<Point> = find_coords(input, b'^').collect();
+        let mut visited = HashSet::<Point>::new();
+        let mut queue: VecDeque<Point> = find_coords(input, b'S').collect();
+        println!("queue={queue:?}");
+        println!("splitters={splitters:?}");
+        let mut routes = 0;
+
+        routes
     }
 
     #[cfg(test)]
@@ -73,7 +90,7 @@ mod part2 {
         }
     }
 }
-*/
+
 fn main() {
     let cli = aoc::cli::parse();
 
