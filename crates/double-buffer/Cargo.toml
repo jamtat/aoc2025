@@ -1,0 +1,9 @@
+[package]
+name = "double-buffer"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+path = "src/double_buffer.rs"
+
+[dependencies]

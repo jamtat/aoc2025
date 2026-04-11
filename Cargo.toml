@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/aoc", "crates/grid", "crates/quant"]
+members = ["crates/aoc", "crates/double-buffer", "crates/grid", "crates/quant"]
 
 [package]
 name = "aoc2025"
@@ -10,6 +10,7 @@ edition = "2024"
 aoc = { path = "crates/aoc" }
 quant = { path = "crates/quant" }
 grid = { path = "crates/grid" }
+double-buffer = { path = "crates/double-buffer" }
 
 colored = "3.0.0"
 itertools = "0.14.0"
