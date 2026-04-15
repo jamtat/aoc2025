@@ -5,7 +5,7 @@ set -euo pipefail
 DAY_NUM="$1"
 
 mkdir -p input/ src/bin/examples/
-touch input/day$DAY_NUM.txt src/bin/examples/day$DAY_NUM.txt
+touch input/day$DAY_NUM.txt examples/day$DAY_NUM.txt
 
 cat << EOF > src/bin/day$DAY_NUM.rs
 use aoc;
@@ -59,4 +59,4 @@ fn main() {
 EOF
 
 
-code input/day$DAY_NUM.txt src/bin/day$DAY_NUM.rs src/bin/examples/day$DAY_NUM.txt
+code input/day$DAY_NUM.txt src/bin/day$DAY_NUM.rs examples/day$DAY_NUM.txt
