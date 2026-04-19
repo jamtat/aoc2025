@@ -22,4 +22,4 @@ regex = "1.12.2"
 opt-level = 3
 
 [lints.clippy]
-pedantic = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = 0 }

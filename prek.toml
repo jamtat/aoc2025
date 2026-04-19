@@ -22,6 +22,6 @@ pass_filenames = false
 id = "cargo clippy"
 name = "cargo clippy"
 language = "system"
-entry = "cargo clippy -- -D warnings"
+entry = "cargo clippy --all-targets -- -D warnings"
 files = "\\.rs$"
 pass_filenames = false
