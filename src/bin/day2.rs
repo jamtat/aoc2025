@@ -4,11 +4,20 @@ use std::ops::RangeInclusive;
 pub struct Range(usize, usize);
 
 impl Range {
+    #[must_use]
     pub fn iter(&self) -> RangeInclusive<usize> {
         self.0..=self.1
     }
 }
 
+impl IntoIterator for &Range {
+    type Item = usize;
+    type IntoIter = RangeInclusive<usize>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
 fn parse_pair(s: &str) -> Range {
     let (l, r) = s.split_once('-').unwrap();
     Range(l.parse().unwrap(), r.parse().unwrap())
@@ -19,7 +28,7 @@ pub fn parse_input(input: &str) -> Vec<Range> {
 }
 
 mod part1 {
-    use super::*;
+    use super::{Range, parse_input};
 
     fn is_invalid(i: usize) -> bool {
         if i < 10 {
@@ -54,7 +63,7 @@ mod part1 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day2.txt");
-            assert_eq!(calculate(&input), 1227775554);
+            assert_eq!(calculate(&input), 1_227_775_554);
         }
 
         #[test]
@@ -62,18 +71,18 @@ mod part1 {
             assert!(!is_invalid(0));
             assert!(!is_invalid(1));
             assert!(!is_invalid(10));
-            assert!(!is_invalid(123321));
+            assert!(!is_invalid(123_321));
             assert!(!is_invalid(1001));
 
             assert!(is_invalid(55));
             assert!(is_invalid(1010));
-            assert!(is_invalid(123123));
+            assert!(is_invalid(123_123));
         }
     }
 }
 
 mod part2 {
-    use super::*;
+    use super::{Range, parse_input};
 
     fn is_invalid(i: usize) -> bool {
         if i < 10 {
@@ -129,7 +138,7 @@ mod part2 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day2.txt");
-            assert_eq!(calculate(&input), 4174379265);
+            assert_eq!(calculate(&input), 4_174_379_265);
         }
 
         #[test]
@@ -141,7 +150,7 @@ mod part2 {
             assert!(is_invalid(999));
             assert!(is_invalid(1010));
 
-            assert!(!is_invalid(9009009));
+            assert!(!is_invalid(9_009_009));
         }
     }
 }

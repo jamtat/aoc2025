@@ -3,9 +3,10 @@ fn max_concat_digits(xs: &[usize], count: u32) -> usize {
         return 0;
     }
 
-    if (count as usize) > xs.len() {
-        panic!("Items not long enough to find max concat digits");
-    }
+    assert!(
+        (count as usize) <= xs.len(),
+        "Items not long enough to find max concat digits"
+    );
 
     let mut max_digit = 0;
     let mut max_ptr = 0;
@@ -47,7 +48,7 @@ fn parse_input(input: &str) -> Vec<Bank> {
 }
 
 mod part1 {
-    use super::*;
+    use super::{max_concat_digits, parse_input};
 
     pub fn calculate(input: &str) -> usize {
         parse_input(input)
@@ -69,7 +70,7 @@ mod part1 {
 }
 
 mod part2 {
-    use super::*;
+    use super::{max_concat_digits, parse_input};
 
     pub fn calculate(input: &str) -> usize {
         parse_input(input)
@@ -85,7 +86,7 @@ mod part2 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day3.txt");
-            assert_eq!(calculate(&input), 3121910778619);
+            assert_eq!(calculate(&input), 3_121_910_778_619);
         }
     }
 }

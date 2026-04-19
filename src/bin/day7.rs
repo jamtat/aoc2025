@@ -10,7 +10,7 @@ fn find_coords(input: &str, b: u8) -> impl Iterator<Item = (usize, usize)> {
 }
 
 mod part1 {
-    use super::*;
+    use super::{DoubleBuffer, HashSet, find_coords};
 
     pub fn calculate(input: &str) -> usize {
         let rows = input.lines().count();
@@ -57,7 +57,7 @@ mod part1 {
 mod part2 {
     use std::collections::HashMap;
 
-    use super::*;
+    use super::{DoubleBuffer, HashSet, find_coords};
 
     #[allow(unused_assignments, unused_variables)]
     pub fn calculate(input: &str) -> usize {

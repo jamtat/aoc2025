@@ -8,6 +8,7 @@ pub enum State {
 }
 
 impl State {
+    #[must_use]
     pub const fn to_char(&self) -> char {
         match self {
             State::Empty => '.',
@@ -35,7 +36,7 @@ impl std::str::FromStr for State {
 }
 
 mod part1 {
-    use super::*;
+    use super::{Grid, State};
 
     pub fn calculate(input: &str) -> usize {
         let floor: Grid<Vec<State>> = input.parse().unwrap();
@@ -82,7 +83,7 @@ mod part1 {
 }
 
 mod part2 {
-    use super::*;
+    use super::{Grid, GridCell, Point, State};
 
     fn can_remove(cell: &GridCell<'_, Vec<State>>) -> bool {
         match *cell.value() {

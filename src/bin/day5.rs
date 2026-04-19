@@ -29,7 +29,7 @@ impl Fresh {
     }
 
     pub fn collapse(ranges: &[Self]) -> Vec<Self> {
-        let sorted: Vec<Self> = ranges.iter().cloned().sorted().collect();
+        let sorted: Vec<Self> = ranges.iter().copied().sorted().collect();
 
         let mut out = vec![sorted[0]];
         for range in sorted.into_iter().skip(1) {
@@ -54,10 +54,10 @@ impl FromStr for Fresh {
         Ok(Self {
             start: start
                 .parse()
-                .map_err(|_| format!("Could not parse start: {:#}", start))?,
+                .map_err(|_| format!("Could not parse start: {start:#}"))?,
             end: end
                 .parse()
-                .map_err(|_| format!("Could not parse end: {:#}", end))?,
+                .map_err(|_| format!("Could not parse end: {end:#}"))?,
         })
     }
 }
@@ -75,12 +75,12 @@ impl FromStr for Input {
 
         let fresh_ranges = fresh_ranges
             .lines()
-            .map(|s| s.parse())
+            .map(str::parse)
             .collect::<Result<Vec<_>, _>>()?;
 
         let ingredients = ingredients
             .lines()
-            .map(|s| s.parse())
+            .map(str::parse)
             .collect::<Result<Vec<_>, _>>()
             .map_err(|_| "Could not parse ingredients")?;
 
@@ -92,7 +92,7 @@ impl FromStr for Input {
 }
 
 mod part1 {
-    use super::*;
+    use super::Input;
 
     pub fn calculate(input: &str) -> usize {
         let input: Input = input.parse().unwrap();
@@ -123,7 +123,7 @@ mod part1 {
 }
 
 mod part2 {
-    use super::*;
+    use super::{Fresh, Input};
 
     pub fn calculate(input: &str) -> u64 {
         let input: Input = input.parse().unwrap();

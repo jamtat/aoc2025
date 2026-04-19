@@ -2,7 +2,7 @@ const START: i64 = 50;
 const DIAL_SIZE: i64 = 100;
 
 mod part1 {
-    use super::*;
+    use super::{DIAL_SIZE, START};
 
     pub fn parse_line(l: &str) -> i64 {
         let (dir, num) = l.split_at(1);
@@ -23,7 +23,7 @@ mod part1 {
         for i in input.lines().map(parse_line) {
             pos += i;
             pos = pos.rem_euclid(DIAL_SIZE);
-            zeroes += (pos == 0) as usize;
+            zeroes += usize::from(pos == 0);
         }
 
         zeroes
@@ -45,9 +45,9 @@ mod part2 {
 
     use crate::part1::parse_line;
 
-    use super::*;
+    use super::{DIAL_SIZE, START};
 
-    pub fn calculate(input: &str) -> usize {
+    pub fn calculate(input: &str) -> u64 {
         let mut pos = START;
         let mut zeroes = 0;
 
@@ -56,8 +56,8 @@ mod part2 {
             if i == 0 {
                 continue;
             }
-            let mut points: usize = 0;
-            let full_rotations = (i / DIAL_SIZE).unsigned_abs() as usize;
+            let mut points = 0;
+            let full_rotations = (i / DIAL_SIZE).unsigned_abs() as u64;
             points += full_rotations;
 
             let rem = i % DIAL_SIZE;

@@ -12,7 +12,7 @@ impl FromStr for Op {
         Ok(match s.trim() {
             "+" => Op::Add,
             "*" => Op::Mul,
-            s => Err(format!("Unrecognised op: {:?}", s))?,
+            s => Err(format!("Unrecognised op: {s:?}"))?,
         })
     }
 }
@@ -50,7 +50,7 @@ impl std::fmt::Display for Op {
 }
 
 mod part1 {
-    use super::*;
+    use super::Op;
 
     pub fn calculate(input: &str) -> u64 {
         let lines: Vec<_> = input.lines().collect();
@@ -59,7 +59,7 @@ mod part1 {
             .last()
             .unwrap()
             .split_whitespace()
-            .map(|s| s.parse())
+            .map(str::parse)
             .collect::<Result<_, _>>()
             .unwrap();
 
@@ -87,13 +87,13 @@ mod part1 {
         #[test]
         fn test_example() {
             let input = aoc::example::example_string("day6.txt");
-            assert_eq!(calculate(&input), 4277556);
+            assert_eq!(calculate(&input), 4_277_556);
         }
     }
 }
 
 mod part2 {
-    use super::*;
+    use super::Op;
 
     pub fn calculate(input: &str) -> u64 {
         let lines: Vec<_> = input.lines().collect();
@@ -102,7 +102,7 @@ mod part2 {
 
         let ops: Vec<Op> = ops_line
             .split_whitespace()
-            .map(|s| s.parse())
+            .map(str::parse)
             .collect::<Result<_, _>>()
             .unwrap();
 
@@ -111,7 +111,7 @@ mod part2 {
                 .as_bytes()
                 .split(|c: &u8| *c != b' ')
                 .skip(1) // First one will be empty because it comes before the first op
-                .map(|l| l.len())
+                .map(<[u8]>::len)
                 .collect();
 
             let l = lens.len();
@@ -134,17 +134,14 @@ mod part2 {
                 let mut num = 0;
                 for line in num_lines {
                     let line = line.as_bytes();
-                    match line[offset + i] {
-                        digit @ b'0'..=b'9' => {
-                            num *= 10;
-                            num += (digit - b'0') as u64;
-                        }
-                        _ => continue,
+                    if let digit @ b'0'..=b'9' = line[offset + i] {
+                        num *= 10;
+                        num += u64::from(digit - b'0');
                     }
                 }
                 #[cfg(test)]
                 println!(" i={i}: parsed num={num}");
-                col_total = op.apply(col_total, num)
+                col_total = op.apply(col_total, num);
             }
             offset += len + 1;
 
@@ -165,7 +162,7 @@ mod part2 {
         fn test_example() {
             let input = aoc::example::example_string("day6.txt");
             println!("{input}");
-            assert_eq!(calculate(&input), 3263827);
+            assert_eq!(calculate(&input), 3_263_827);
         }
     }
 }
