@@ -52,6 +52,10 @@ impl<T, const N: usize> NPoint<T, N> {
             .map(|(a, b)| a.abs_diff(b))
             .sum()
     }
+
+    pub fn get(&self, idx: usize) -> &T {
+        &self.0[idx]
+    }
 }
 
 impl<'a, T, const N: usize> std::ops::Add<&'a NPoint<T, N>> for &'a NPoint<T, N>
