@@ -124,7 +124,7 @@ mod part2 {
 
         let mut grand_total = 0;
         #[allow(unused_variables)]
-        for (col_i, (op, len)) in ops.into_iter().zip(lens.into_iter()).enumerate() {
+        for (col_i, (op, len)) in ops.into_iter().zip(lens).enumerate() {
             let mut col_total = op.base();
 
             #[cfg(test)]
