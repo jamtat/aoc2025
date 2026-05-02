@@ -93,7 +93,7 @@ where
         f.write_char('(')?;
 
         for (i, val) in self.0.iter().enumerate() {
-            if i != 0 {
+            if i == 0 {
                 write!(f, "{val}")?;
             } else {
                 write!(f, ", {val}")?;
